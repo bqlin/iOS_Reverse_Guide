@@ -6,7 +6,7 @@
 
 <!-- Put a border around views with an ambiguous layout. Expects 'raw' input (see 'help raw-input'.) -->
 
-在布局含糊的视图添加边框。
+框选布局含糊的视图。
 
 语法：`alamborder [--color=color] [--width=width]`
 
@@ -25,7 +25,7 @@
 
 <!-- Removes the border around views with an ambiguous layout. Expects 'raw' input (see 'help raw-input'.) -->
 
-移除布局含糊的视图添加的边框。
+取消框选布局含糊的视图。
 
 语法：`alamunborder`
 
@@ -44,7 +44,7 @@
 参数：
 
   - `<address>`
-    + 类型：string。在当前运行的 framework 内设置断点的地址。
+    + 类型：string。在当前运行的库内设置断点的地址。
 
 该命令由 `FBFrameworkAddressBreakpointCommand` 实现，该文件位于：
 /usr/local/Cellar/chisel/1.5.0/libexec/commands/FBDebugCommands.py
@@ -54,7 +54,7 @@
 
 <!-- Set a breakpoint for a selector on a class, even if the class itself doesn't override that selector. It walks the hierarchy until it finds a class that does implement the selector and sets a conditional breakpoint there. Expects 'raw' input (see 'help raw-input'.) -->
 
-给类的 selector 设置断点，即使该类本身没有该 selector。该命令遍历类的继承关系，直至找到实现 selector 的类，并在其设置断点。
+给类的 selector 设置断点，即使该类本身没有该 selector。该命令会遍历类的继承关系，直至找到实现 selector 的类，并在其设置断点。
 
 语法：`bmessage <expression>`
 
@@ -71,7 +71,7 @@
 
 <!-- Draws a border around <viewOrLayer>. Color and width can be optionally provided. Additionally depth can be provided in order to recursively border subviews. Expects 'raw' input (see 'help raw-input'.) -->
 
-在视图或图层绘制边框。可选择提供颜色和宽度。另外还可以设置深度，以递归个子视图绘制边框。
+在视图或图层绘制边框。可选择提供颜色和宽度。另外还可以设置深度，以递归其子视图绘制边框。
 
 语法：`border [--color=color] [--width=width] [--depth=depth] <viewOrLayer>`
 
@@ -128,7 +128,7 @@
 
 <!-- Dismiss a presented view controller. Expects 'raw' input (see 'help raw-input'.) -->
 
-关闭（dismiss）模态出来的（presented）视图控制。
+关闭（dismiss）模态推出的（presented）视图控制。
 
 语法：`dismiss <viewController>`
 
@@ -179,7 +179,7 @@
 
 <!-- Find the views whose class names match classNameRegex and puts the address of first on the clipboard. Expects 'raw' input (see 'help raw-input'.) -->
 
-找到符合正则表达式的视图类名，并将找到的第一个地址放在剪贴板上。
+找到符合正则表达式的类名的视图对象，并将找到的第一个地址放在剪贴板上。
 
 语法：`fv <classNameRegex>`
 
@@ -196,7 +196,7 @@
 
 <!-- Find the view controllers whose class names match classNameRegex and puts the address of first on the clipboard. Expects 'raw' input (see 'help raw-input'.) -->
 
-找到符合正则表达式的视图控制器类名，并将找到的第一个地址放在剪贴板上。
+找到符合正则表达式的类名的视图控制器对象，并将找到的第一个地址放在剪贴板上。
 
 语法：`fvc [--name=classNameRegex] [--view=view]`
 
@@ -220,7 +220,7 @@
 语法：`hide <viewOrLayer>`
 
 参数：
-  - `<viewOrLayer>`; ; The view/layer to hide.
+  - `<viewOrLayer>`
     + 类型：UIView/NSView/CALayer \*。
 
 该命令由 `FBHideViewCommand` 实现，该文件位于：
@@ -231,7 +231,7 @@
 
 <!-- Add a transparent rectangle to the window to reveal a possibly obscured or hidden view or layer's bounds  Expects 'raw' input (see 'help raw-input'.) -->
 
-在窗口上添加一个透明矩形遮罩，以显示可能遮挡（obscured）或隐藏的视图或图层边界。
+在窗口上添加一个透明矩形遮罩，以显示可能遮挡（obscured）或隐藏的视图或图层边界。其反向命令是 `unmask`。
 
 语法：`mask [--color=color] [--alpha=alpha] <viewOrLayer>`
 
@@ -346,7 +346,7 @@
 
 <!-- Print object and copy output to clipboard Expects 'raw' input (see 'help raw-input'.) -->
 
-打印对象并拷贝结构到剪贴板中。
+打印对象并拷贝输出结果到剪贴板中。
 
 语法：`pbcopy <object>`
 
@@ -438,7 +438,7 @@
 
 <!-- Print a recursive description of components found starting from <aView>. Expects 'raw' input (see 'help raw-input'.) -->
 
-递归打印从给定的视图开始的组件（description）描述。
+递归打印从给定的视图开始的组件（components）描述。
 
 语法：`pcomponents [--up] [--show-views=showViews] <aView>`
 
@@ -468,7 +468,7 @@
 
 参数：
 
-  - `<request>`; ; The request to convert to the curl command.
+  - `<request>`
     + 类型：NSURLRequest \*/NSMutableURLRequest \*。转换为 curl 命令的请求对象。
 
 选项：
@@ -508,7 +508,7 @@
 
 参数：
 
-  - `<data>`; ; NSData object.
+  - `<data>`
     + 类型：NSData \*。NSData 对象。
 
 选项：
@@ -547,7 +547,7 @@
 
 参数：
 
-  - `<object>`; 类型：id; Object expression to be evaluated.
+  - `<object>`
     + 类型：id。要求值的对象表达式。
 
 该命令由 `FBPrintInternals` 实现，该文件位于：
@@ -558,7 +558,7 @@
 
 <!-- Print the stack frame, receiver, and arguments of the current invocation. It will fail to print all arguments if any arguments are variadic (varargs). Expects 'raw' input (see 'help raw-input'.) -->
 
-打印当前调用的堆栈帧（stack frame）、receiver 和参数。如何冉义参数是可变参数（varargs），将无法打印所有参数。
+打印当前调用的堆栈帧（stack frame）、receiver 和参数。若果存在参数是可变参数（varargs），将无法打印所有参数。
 
 语法：`pinvocation [--all]`
 
@@ -602,7 +602,7 @@
 
 参数：
 
-  - `<object>`; ; The NSDictionary or NSArray object to print
+  - `<object>`
     + 类型：id。要打印的 NSDictionary 或 NSArray 对象。
 
 选项：
@@ -663,7 +663,7 @@
 
 <!-- Print the expression result, with the expression run in an ObjC++ context. (Shortcut for "expression -O -l ObjC++ -- " )  Expects 'raw' input (see 'help raw-input'.) -->
 
-打印表达式结果，表达式在 ObjC++ 上下文中运行。这是“expression -O -l ObjC++ -- ”的捷径。
+打印表达式结果，表达式在 ObjC++ 上下文中运行。这是 `expression -O -l ObjC++ -- ` 的捷径。
 
 语法：`poobjc <expression>`
 
@@ -725,7 +725,7 @@
 
 参数：
 
-  - `<startResponder>`; 类型：UIResponder \*; The responder to use to start walking the chain.
+  - `<startResponder>`
     + 类型：UIResponder \*。响应链起始响应者。
 
 该命令由 `FBPrintUpwardResponderChain` 实现，该文件位于：
@@ -795,7 +795,7 @@
 
 参数：
 
-  - `<aView>`; ; The view to from which the search for the root components begins.
+  - `<aView>`
     + 类型：UIView \*。开始搜索根组件的视图。
 
 选项：
@@ -881,7 +881,7 @@
 
 <!-- Log tapped view to the console. Expects 'raw' input (see 'help raw-input'.) -->
 
-打印点击的视图到控制器。
+打印点击的视图到控制台。
 
 语法：`taplog`
 
@@ -893,7 +893,7 @@
 
 <!-- Removes border around <viewOrLayer>. Expects 'raw' input (see 'help raw-input'.) -->
 
-删除给定视图或图层的边框。
+去除给定视图或图层的边框。
 
 语法：`unborder [--depth=depth] <viewOrLayer>`
 
@@ -915,14 +915,14 @@
 
 <!-- Remove mask from a view or layer  Expects 'raw' input (see 'help raw-input'.) -->
 
-去除视图或图层的 mask。
+去除视图或图层的添加的遮罩。其反向命令是 `mask`。
 
 语法：`unmask <viewOrLayer>`
 
 参数：
 
   - `<viewOrLayer>`
-    + 类型：UIView/CALayer \*。要去除 mask 的 view/layer。
+    + 类型：UIView/CALayer \*。要去除遮罩的 view/layer。
 
 该命令由 `FBUnmaskViewCommand` 实现，该文件位于：
 /usr/local/Cellar/chisel/1.5.0/libexec/commands/FBDisplayCommands.py
