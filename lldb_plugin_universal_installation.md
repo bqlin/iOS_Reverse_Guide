@@ -7,3 +7,5 @@
 ```
 command script import py文件路径
 ```
+
+配置完成后想要生效，可以重启 Xcode，或则 LLDB 中键入：`command source ~/.lldbinit`，即可马上载入插件。
