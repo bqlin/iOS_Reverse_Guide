@@ -2,93 +2,101 @@
 
 项目链接：<https://github.com/DerekSelander/LLDB>
 
-For all commands below, you can view the documentation via `help {command}`. If you want to see what options a command has, type `{command} -h`.
+对于以下所有命令，你可以通过 `help {command}` 方式查看文档。如果要查看命令有哪些参数，可以通过 `{command} -h` 查询。
 
-TLDR: `search`, `lookup`, and `dclass` are good GOTOs irregardless if you're a dev or exploring without source. 
+<!-- TLDR: `search`, `lookup`, and `dclass` are good GOTOs irregardless if you're a dev or exploring without source.  -->
 
-If you like ObjC swizzling, check out `sclass`. If you like DTrace, check out `pmodule` and `snoopie`.
+TLDR：如果你手头上没有源码，你可以使用 `search`、`lookup` 和 `dclass` 直接开干。
+
+如果你喜欢 ObjC swizzling，可以查看 `sclass` 命令。如果你喜欢 DTrace，可以查看 `pmodule` 和 `snoopie` 命令。
 
 ## search
 
-  Searchs the heap for all alive instances of a certain class. This class must by dynamic (aka inherit from a `NSObject`/`SwiftObject` class). Currently doesn't work with `NSString` or `NSNumber` (tagged pointer objects).
-  
-  Example:
-  
-      # Find all instances and subclasses of UIView
+  <!-- Searchs the heap for all alive instances of a certain class. This class must by dynamic (aka inherit from a `NSObject`/`SwiftObject` class). Currently doesn't work with `NSString` or `NSNumber` (tagged pointer objects). -->
+
+在堆中搜索给定类所有存活的实例对象。这个类必须通过 dynamic 的（也就是从 `NSObject`/`SwiftObject` 类继承的）。目前无法搜索 `NSString` 或 `NSNumber` 类（标记指针对象（tagged pointer objects））。
+
+示例：
+
+      # 找到所有 UIView 和其子类的实例对象
       (lldb)  search UIView
 
       # Find all instances of UIView that are UIViews. Ignore subclasses.
       (lldb) search UIView -e
 
-      #Find all instances of UIView whose tag is equal to 5. Objective-C syntax only. Can reference object by 'obj'
+      # 找到 tag 等于 5 的所有 UIView 对象。只支持 Objective-C 语法。可以通过 “obj” 引用对象。
       (lldb) search UIView -c "(int)[obj tag]==5"
 
-      # Find all instances of a UIView subclass whose class is implemented in the SpringBoardUI module
+      # 找到其类在 SpringBoardUI 模块中实现的 UIView 子类的所有实例对象。
       (lldb) search UIView -m SpringBoardUI
 
-      # Find all UIView subclasses created in the "Woot" module and hide them
+      # 找到在“Woot”模块中创建的，所有 UIView 子类对象，并隐藏它们
       (lldb) search UIView -m Woot -p "[obj setHidden:YES]"
 
-      # Search for UIViews but just print the class, don't print object description (ideal for Swift where they hide the pointer)
+      # 搜索 UIView，但只打印类，不打印对象描述。（非常适合 Swift 隐藏指针）
       (lldb) search UIView -b
 
-      # Remember, Swift includes the module in a class name, so if you have a Swift UIView called TestView in module WOOT...
+      # 记住，Swift 在类名中包含了模块，所以如果你在 WOOT 模块中有一个叫 TestView 的 Swift UIView，你应该这么使用：
       (lldb) search WOOT.TestView -b
 
-      # Search for all classes that contain a reference to the pointer 0xfeedfacf
+      # 搜索包含指针 0xfeedfacf 的引用的所有类
       (lldb) search -r 0xfeedfacf
 
 ## dclass
 
-Dumps all the `NSObject`/`SwiftObject` inherited classes in the process. If you give it a module, it will dump only the classes within that module. You can also filter out classes to only a certain type and can also generate a header file for a specific class.
-  
-  Example:
-  
-      # Dump ALL the classes (Swift and Objective-C) found within the process
+<!-- Dumps all the `NSObject`/`SwiftObject` inherited classes in the process. If you give it a module, it will dump only the classes within that module. You can also filter out classes to only a certain type and can also generate a header file for a specific class. -->
+
+Dump 进程中所有继承 `NSObject`/`SwiftObject` 的类。如果给定一个模块，则只 dump 该模块中的类。你还可以将类筛选仅为某种类型，还可以为特定类生成头文件。
+
+示例：
+
+      # Dump 进程中发现的所有类（Swift 和 Objective-C）
       (lldb) dclass
 
-      # Dump ObjC/Swift info (if applicable) about the class "Hello.SomeClass" (same as dclass -i Hello.SomeClass)
+      # Dump 关于“Hello.SomeClass”类的 ObjC/Swift 信息
       (lldb) dclass Hello.SomeClass
 
-      # Dump all the classes that are a UIViewController within the process
+      # Dump 进程中所有 UIViewController 的类
       (lldb) dclass -f UIViewController
 
-      # Dump all the classes with the regex case insensitive search "viewcontroller" in the class name
+      # 在类名中使用正则表达式，并且不区分大小写，搜索“viewcontroller”所有类，并进行 dump
       (lldb) dclass -r (?i)viewCoNtrolLer
 
-      # Dump all the classes within the UIKit module
+      # Dump 在 UIKit 模块中的所有类
       (lldb) dclass -m UIKit
 
-      # Dump all classes in CKConfettiEffect NSBundle that are UIView subclasses
+      # Dump 在 CKConfettiEffect NSBundle 中，且为 UIView 子类的所有类
       (lldb) dclass /System/Library/Messages/iMessageEffects/CKConfettiEffect.bundle/CKConfettiEffect -f UIView
 
-      # Generate a header file for the class specified:
+      # 为给定的类生成头文件
       (lldb) dclass -g UIView
 
-      # Generate a protocol that you can cast an object to. Ideal when working with private classes at dev time
+      # 生成可以将对象强制转换的协议，适合在开发中使用私有类
       (lldb) dclass -P UIView
 
-      # Dump all classes and methods for a particular module, ideal for viewing changes in frameworks over time
+      # Dump 特定模块的所有类和方法，非常适合用于查看库中的更改
       (lldb) dclass -o UIKit
 
-      # Only dump classes whose superclass is of type NSObjecr and in the UIKit module. Ideal for going after specific classes like a datasource where it will likely inherit from NSObject
+      # 仅 dump 其父类为 NSObject 且在 UIKit 模块中的类。非常适合用于追踪特定的类，例如可能继承自 NSObject 的数据源。
       (lldb) dclass -s NSObject -m UIKit
 
-      # Dump only Swift classes
+      # 仅 dump Swift 类
       (lldb) dclass -t swift
 
-      # Dump only Objective-C classes
+      # 仅 dump Objective-C 类
       (lldb) dclass -t objc
 
-      # Get a simplified "class-dump" of the UIView class
+      # 获取 UIView 类的简化“class-dump”
       (lldb) dclass -i UIView
 
-      # Get more information than you ever wanted to know about UIView
+      # 获取有关 UIView 的更多信息
       (lldb) dclass -I UIView
 
 ## section
 
-Displays data in the Mach-O segments/sections of the executable or frameworks loaded into the proc
+<!-- Displays data in the Mach-O segments/sections of the executable or frameworks loaded into the proc -->
+
+显示加载到进程（proc）的可执行文件或 Mach-O segments/sections 的数据。
 
       # Dump the Mach-O segments to the main executable
       (lldb) section
@@ -110,68 +118,84 @@ Displays data in the Mach-O segments/sections of the executable or frameworks lo
 
 ## dd
 
-Alternative to LLDB's `disassemble` command. Uses colors. Terminal only and designed for x86)64. ARM64 support will come one day...
+<!-- Alternative to LLDB's `disassemble` command. Uses colors. Terminal only and designed for x86)64. ARM64 support will come one day... -->
+
+替代 LLDB 的 `disassemble` 命令。使用颜色。仅限 x86/64 的终端可用。ARM64 也将会支持……
+
 ![yoink example](https://github.com/DerekSelander/LLDB/raw/master/Media/dd.png)
 
 ## sbt
 
-      Symbolicate backtrace. Will symbolicate a stripped backtrace from an executable if the backtrace is using Objective-C
-      code. Currently doesn't work on aarch64 stripped executables but works great on x64 :]
+<!-- Symbolicate backtrace. Will symbolicate a stripped backtrace from an executable if the backtrace is using Objective-C code. Currently doesn't work on aarch64 stripped executables but works great on x64 :] -->
 
-      You learn how to make this command in the book :]
+符号表还原（Symbolicate backtrace）。可以还原 Objective-C 代码编写的程序的符号表。目前不适用于 aarch64 剥离的可执行文件，但在 x64 上运行良好。:]
+
+<!-- You learn how to make this command in the book :] -->
 
 ![sbt example](https://github.com/DerekSelander/LLDB/raw/master/Media/sbt_gif.gif)
 
 ## msl
 
       msl 0xadd7e55
-      msl or malloc stack logging will take an address and try and obtain the stack trace to
-      when it was created. 
 
-      You will need to set the env var to MallocStackLogging, or `execute turn_on_stack_logging(1)`
-      while the process is active
+<!-- msl or malloc stack logging will take an address and try and obtain the stack trace to when it was created.  -->
 
-      You learn how to make this command in the book :]
+msl 或 malloc 栈日志将获取一个地址，并获尝试取创建时的堆栈信息。
+
+<!-- You will need to set the env var to MallocStackLogging, or `execute turn_on_stack_logging(1)` while the process is active -->
+
+你需要将 env var 设置为 MallocStackLogging，或者在进程出于活动状态时执行 `execute turn_on_stack_logging(1)`。
+
+<!-- You learn how to make this command in the book :] -->
 
 ![msl example](https://github.com/DerekSelander/LLDB/raw/master/Media/msl_gif.gif)
 
 ## lookup
 
-Perform a regular expression search for stuff in an executable
+<!-- Perform a regular expression search for stuff in an executable -->
 
-  Example:
-  
-      # Find all methods that contain the phrase viewDidLoad
+对可执行文件中的内容执行正则表达式搜索。
+
+示例：
+
+      # 查找包含 viewDidLoad 的所有方法
       (lldb) lookup viewDidLoad
 
-      # Find a summary of all the modules that have a (known) function containing the phrase viewDidLoad
+      # 查找具有包含 viewDidLoad 的（已知）函数的所有模块摘要
       (lldb) lookup viewDidLoad -s
 
-      # Search for Objective-C code in a stripped module (i.e. in SpringBoard)
+      # 在剥离模块中搜索 Objective-C 代码（例如在 SpringBoard 中）
       (lldb) loo -x StocksFramework .
 
-      # Search for Objective-C code containing the case insensitive phrase init inside a stripped main bundle
+      # 在剥离的 main bundle 中搜索包含不区分大小写的 init 的 Objective-C 代码
       (lldb) lookup -X (?i)init
 
-      # Search for all hardcoded, embeded `char *` inside an executable containing the phrase *http* inside UIKit
+      # 在 UIKit 中搜索包含 http 的所有硬编码嵌入的 `char *` 字符串
       (lldb) lookup -S http -m UIKit
 
       # Dump all the md5'd base64 keys in libMobileGestalt along w/ the address in memory
       (lldb) loo -S ^[a-zA-Z0-9\+]{22,22}$ -m libMobileGestalt.dylib -l
 
-      # Dump all the global bss code referenced by DWARF. Ideal for accessing `static` variables when not in scope
+      # Dump 所有 DWARF 引用的所有全局 bass 代码。这适用于不在作用域中访问 `static` 变量
       (lldb) lookup . -g HonoluluArt -l
 
 ## biof
 
-    Break if on func. Syntax: biof [ModuleName] regex1 ||| [ModuleName2] regex2
-    Regex breakpoint that takes two regex inputs. The first regex creates a breakpoint on all matched functions.
-    The second regex will make a breakpoint condition to stop only if the second regex breakpoint is in the stack trace
+<!-- Break if on func. Syntax: biof [ModuleName] regex1 ||| [ModuleName2] regex2 -->
 
-    For example, to only stop if code in the "TestApp" module resulted in executing the setTintColor: method being called
+在函数上设置断点。语法：`biof [ModuleName] regex1 ||| [ModuleName2] regex2`
+
+<!-- Regex breakpoint that takes two regex inputs. The first regex creates a breakpoint on all matched functions.The second regex will make a breakpoint condition to stop only if the second regex breakpoint is in the stack trace -->
+
+正则表达式断点。需要两个正则表达式作为输入。第一个正则表达式在所有匹配的函数上设置断点。第二个正则表达式让断点仅在栈追踪时停止。
+
+<!-- For example, to only stop if code in the "TestApp" module resulted in executing the setTintColor: method being called -->
+
+例如，仅在“TestApp”模块中的代码导致执行 `setTintColor:` 时才停止：
+
     biof setTintColor: ||| . Test
 
-    As a tip, it would be wise to have a limited regex1 that matches a small amount of functions, while keeping regex2 at any size
+As a tip, it would be wise to have a limited regex1 that matches a small amount of functions, while keeping regex2 at any size
 
 ## yoink
 
@@ -190,9 +214,9 @@ Perform a regular expression search for stuff in an executable
   memory layout and ASLR. Provide no arguments w/ '-a' if you want a count of all the modules firing.
   Provide a module if you want to dump all the methods as they occur. The location of the script is
   copied to your computer so you can paste the soon to be executed dtrace script in the Terminal.
-  
+
   WARNING: YOU MUST DISABLE ROOTLESS TO USE DTRACE
-  
+
       # Trace all Objective-C code in UIKit 
       (lldb) pmodule UIKit
 
@@ -211,7 +235,7 @@ Perform a regular expression search for stuff in an executable
     profiling objc_msgSend. The creation of this command is discussed in the book.
 
   WARNING: YOU MUST DISABLE ROOTLESS TO USE DTRACE
-  
+
 ## LLDB Commands
 
 ## ls
