@@ -1,8 +1,8 @@
 # LLDB 及其插件文档速查
 
-本仓库对 LLDB 一些常用命令进行汇总，并对一些常用插件的文档进行翻译。
+本目录对 LLDB 一些常用命令进行汇总，并对一些常用插件的文档进行翻译。
 
-以下是本仓库目录：
+以下是本目录索引：
 
 - [LLDB 常用命令](./lldb_guide.md)
 - [LLDB 插件通用安装方式](./lldb_plugin_universal_installation.md)
@@ -10,8 +10,4 @@
     + [Chisel 命令速查](./plugin_chisel_guide.md)
     + [LLDB 命令速查](plugin_lldb_guide.md)
 
-若发现翻译过程中的错误或有更好的表达方式，欢迎 issue 我哦~
-
 另外附上 LLDB 官网：<http://lldb.llvm.org/index.html>
-
-> 为避免不必要的麻烦，若需转载，请标明出处。
